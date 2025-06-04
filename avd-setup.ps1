@@ -6,7 +6,7 @@ param(
 
 if ($Mode -eq "init") {
     # 1. Install WSL and Ubuntu 24.04 (only if not present)
-    $wslInstalled = wsl --list --quiet | Select-String -SimpleMatch "Ubuntu-24.04"
+    $wslInstalled = wsl -l -q | Where-Object { $_ -eq "Ubuntu-24.04" }
     if (-not $wslInstalled) {
         wsl --install -d Ubuntu-24.04
 
@@ -58,8 +58,11 @@ if ($Mode -eq "init") {
     # Install VS Code Extensions (only if VS Code is installed)
     if (Get-Command code -ErrorAction SilentlyContinue) {
         Write-Host "Installing VS Code extensions..."
+        $installed = code --list-extensions
         foreach ($ext in $vscodeExtensions) {
-            code --install-extension $ext --force
+            if ($installed -notcontains $ext) {
+                code --install-extension $ext --force
+            }
         }
     } else {
         Write-Host "VS Code is not installed, skipping extensions."
