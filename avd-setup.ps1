@@ -39,14 +39,14 @@ if ($Mode -eq "init") {
     # 3. Install tools via Chocolatey
     $tools = @(
         # Rancher Desktop with auto-updates disabled
-        "rancher-desktop --params=\"/NoAutoUpdates:true\"",
+        "rancher-desktop --params='/NoAutoUpdates:true'",
         "vscode",
-        "git",
+        "git"
         # Azure Data Studio with auto-updates disabled
         # "azure-data-studio --params=\"/NoAutoUpdates:true\"",
     )
     $vscodeExtensions = @(
-        "ms-vscode-remote.remote-containers",
+        "ms-vscode-remote.remote-containers"
         # "ms-azuretools.vscode-containers"
     )
 
