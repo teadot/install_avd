@@ -5,13 +5,13 @@ param(
 )
 
 if ($Mode -eq "init") {
-    # 1. WSL und Ubuntu 24.04 installieren (nur wenn nicht vorhanden)
+    # 1. Install WSL and Ubuntu 24.04 (only if not present)
     $wslInstalled = wsl --list --quiet | Select-String -SimpleMatch "Ubuntu-24.04"
     if (-not $wslInstalled) {
         wsl --install -d Ubuntu-24.04
 
-        # Warten, bis WSL installiert ist
-        Write-Host "Bitte warten, WSL und Ubuntu 24.04 werden installiert..."
+        # Wait until WSL is installed
+        Write-Host "Please wait, WSL and Ubuntu 24.04 are being installed..."
         $wslReady = $false
         while (-not $wslReady) {
             Start-Sleep -Seconds 5
@@ -20,29 +20,29 @@ if ($Mode -eq "init") {
                 $wslReady = $true
             }
         }
-        # Hinweis für User: Beim ersten Start von Ubuntu-24.04 wird das Passwort abgefragt
-        Write-Host "Beim ersten Start von Ubuntu 24.04 bitte Benutzername und Passwort festlegen."
+        # Note for user: On first start of Ubuntu-24.04, username and password will be requested
+        Write-Host "On first start of Ubuntu 24.04, please set username and password."
     } else {
-        Write-Host "WSL mit Ubuntu 24.04 ist bereits installiert."
+        Write-Host "WSL with Ubuntu 24.04 is already installed."
     }
 
-    # 2. Chocolatey installieren (nur wenn nicht vorhanden)
+    # 2. Install Chocolatey (only if not present)
     Set-ExecutionPolicy Bypass -Scope Process -Force
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
     if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-        Write-Host "Installiere Chocolatey..."
+        Write-Host "Installing Chocolatey..."
         Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
     } else {
-        Write-Host "Chocolatey ist bereits installiert."
+        Write-Host "Chocolatey is already installed."
     }
 
-    # 3. Tools via Chocolatey installieren
+    # 3. Install tools via Chocolatey
     $tools = @(
-        # Rancher Desktop mit deaktivierten Auto-Updates
+        # Rancher Desktop with auto-updates disabled
         "rancher-desktop --params=\"/NoAutoUpdates:true\"",
         "vscode",
         "git",
-        # Azure Data Studio mit deaktivierten Auto-Updates
+        # Azure Data Studio with auto-updates disabled
         # "azure-data-studio --params=\"/NoAutoUpdates:true\"",
     )
     $vscodeExtensions = @(
@@ -51,53 +51,53 @@ if ($Mode -eq "init") {
     )
 
     foreach ($tool in $tools) {
-        Write-Host "Installiere $tool ..."
+        Write-Host "Installing $tool ..."
         choco install $tool -y --ignore-checksums
     }
 
-    # VS Code Extensions installieren (nur wenn VS Code installiert ist)
+    # Install VS Code Extensions (only if VS Code is installed)
     if (Get-Command code -ErrorAction SilentlyContinue) {
-        Write-Host "Installiere VS Code Extensions..."
+        Write-Host "Installing VS Code extensions..."
         foreach ($ext in $vscodeExtensions) {
             code --install-extension $ext --force
         }
     } else {
-        Write-Host "VS Code ist nicht installiert, Extensions werden übersprungen."
+        Write-Host "VS Code is not installed, skipping extensions."
     }
 
-    Write-Host "Fertig! Alle Tools wurden installiert."
+    Write-Host "Done! All tools have been installed."
 }
 elseif ($Mode -eq "update") {
-    # Vorbedingungen prüfen
+    # Check prerequisites
     if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-        Write-Host "Fehler: Chocolatey ist nicht installiert. Bitte zuerst 'init' ausführen."
+        Write-Host "Error: Chocolatey is not installed. Please run 'init' first."
         exit 1
     }
     if (-not (Get-Command code -ErrorAction SilentlyContinue)) {
-        Write-Host "Fehler: Visual Studio Code ist nicht installiert. Bitte zuerst 'init' ausführen."
+        Write-Host "Error: Visual Studio Code is not installed. Please run 'init' first."
         exit 1
     }
 
-    # Komponenten aktualisieren
-    Write-Host "Aktualisiere Chocolatey selbst..."
+    # Update components
+    Write-Host "Upgrading Chocolatey itself..."
     choco upgrade chocolatey -y
 
-    # Alle installierten Chocolatey-Pakete aktualisieren
-    Write-Host "Aktualisiere alle installierten Chocolatey-Pakete..."
+    # Upgrade all installed Chocolatey packages
+    Write-Host "Upgrading all installed Chocolatey packages..."
     choco upgrade all -y --ignore-checksums
 
-    # Alle installierten VS Code Extensions aktualisieren
-    Write-Host "Aktualisiere alle installierten VS Code Extensions..."
+    # Upgrade all installed VS Code extensions
+    Write-Host "Upgrading all installed VS Code extensions..."
     $installedExtensions = code --list-extensions
     foreach ($ext in $installedExtensions) {
         code --install-extension $ext --force
     }
 
-    Write-Host "Führe Update für Ubuntu 24.04 (WSL) aus..."
+    Write-Host "Running update for Ubuntu 24.04 (WSL)..."
     wsl -d Ubuntu-24.04 -- sh -c "sudo apt update && sudo apt upgrade -y"
 
-    Write-Host "Update abgeschlossen."
+    Write-Host "Update completed."
 }
 else {
-    Write-Host "Ungültiger Modus. Bitte 'init' oder 'update' angeben."
+    Write-Host "Invalid mode. Please specify 'init' or 'update'."
 }
