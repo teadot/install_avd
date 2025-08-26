@@ -1,0 +1,9 @@
+Microsoft.AzureCLI
+Docker.DockerCLI
+Git.Git
+Mozilla.Firefox
+Headlamp.Headlamp
+Insomnia.Insomnia
+Logseq.Logseq
+Obsidian.Obsidian
+JanDeDobbeleer.OhMyPosh
