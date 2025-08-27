@@ -7,3 +7,9 @@ Insomnia.Insomnia
 Logseq.Logseq
 Obsidian.Obsidian
 JanDeDobbeleer.OhMyPosh
+Kubernetes.kubectl
+Microsoft.WindowsTerminal.Preview
+SUSE.RancherDesktop
+Starship.Starship
+SublimeHQ.SublimeText.4
+Microsoft.PowerToys

@@ -1,0 +1,8 @@
+ms-mssql.mssql
+ms-vscode-remote.remote-containers
+ms-vsliveshare.vsliveshare
+mhutchie.git-graph
+PKief.material-icon-theme
+miguelsolorio.fluent-icons
+zhuangtongfa.material-theme
+akamud.vscode-theme-onedark
